@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['Root']
+
+roboflow:
+  workspace: muhammad-harits
+  project: data-set-root
+  version: 4
+  license: MIT
+  url: https://universe.roboflow.com/muhammad-harits/data-set-root/dataset/4

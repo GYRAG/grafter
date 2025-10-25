@@ -1,0 +1,8 @@
+# YOLOv8 configuration for branch detection
+path: C:\Users\kinkl\Downloads\branchera.v1i.coco\yolo_dataset
+train: train/images
+val: val/images
+
+# Classes
+nc: 1  # number of classes
+names: ['branch']  # class names

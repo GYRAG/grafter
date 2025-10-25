@@ -1,0 +1,18 @@
+# Flask backend dependencies for live root detection
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-SocketIO==5.3.6
+python-socketio==5.10.0
+gevent==23.9.1
+gevent-websocket==0.10.1
+
+# AI/ML dependencies
+ultralytics==8.0.196
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=9.5.0
+
+# Additional utilities
+python-dotenv==1.0.0

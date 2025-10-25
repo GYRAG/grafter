@@ -1,0 +1,24 @@
+# Core PyTorch with CUDA support for RTX 4070 Mobile
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+
+# Detectron2 dependencies
+opencv-python>=4.8.0
+pycocotools>=2.0.6
+matplotlib>=3.7.0
+tensorboard>=2.13.0
+pillow>=9.5.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Additional utilities
+scipy>=1.10.0
+scikit-image>=0.21.0
+pandas>=2.0.0
+
+# Optional: For better performance
+ninja>=1.11.0
+
+# Note: Detectron2 will be installed separately via git
+# Run: pip install 'git+https://github.com/facebookresearch/detectron2.git'

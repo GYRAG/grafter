@@ -1,0 +1,9 @@
+{
+  "training_time_minutes": 19.610646855831146,
+  "epochs": 100,
+  "batch_size": 8,
+  "model": "YOLOv8n",
+  "dataset": "root detection",
+  "gpu_memory_gb": 7.99560546875,
+  "timestamp": "2025-10-25T12:48:08.696821"
+}
