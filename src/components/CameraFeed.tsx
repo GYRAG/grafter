@@ -15,7 +15,7 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [videoDimensions, setVideoDimensions] = useState<{ width: number; height: number }>({ width: 640, height: 480 });
+  const [, setVideoDimensions] = useState<{ width: number; height: number }>({ width: 640, height: 480 });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
 
   // Auto-capture frames when streaming
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    let intervalId: number;
     
     if (isStreaming) {
       // Capture frames at ~15 FPS (every 67ms)

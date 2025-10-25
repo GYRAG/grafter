@@ -34,7 +34,7 @@ export const useRestAPI = (url: string = 'http://localhost:5000'): UseRestAPIRet
   const checkConnection = useCallback(async () => {
     try {
       const response = await fetch(`${url}/api/health`);
-      const data = await response.json();
+      await response.json();
       setIsConnected(response.ok);
       return response.ok;
     } catch (err) {

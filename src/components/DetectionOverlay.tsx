@@ -107,7 +107,7 @@ const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
 
   const drawCameraCenter = (
     ctx: CanvasRenderingContext2D,
-    width: number,
+    _width: number,
     height: number,
     center: [number, number]
   ) => {

@@ -19,18 +19,18 @@ interface Detection {
 const LiveRootDetectorSimple: React.FC = () => {
   // State management
   const [isStreaming, setIsStreaming] = useState(false);
-  const [confidence, setConfidence] = useState(0.5);
+  const [confidence] = useState(0.5);
   const [detections, setDetections] = useState<Detection[]>([]);
   const [videoDimensions, setVideoDimensions] = useState({ width: 640, height: 480 });
   const [cameraCenter, setCameraCenter] = useState<[number, number]>([320, 240]);
   const [tolerance] = useState(30);
 
   // REST API connection
-  const { isConnected, sendFrame, setConfidence: setServerConfidence, lastResult, error, isLoading } = useRestAPI();
+  const { isConnected, sendFrame, lastResult, error, isLoading } = useRestAPI();
 
   // Refs
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const frameIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const frameIntervalRef = useRef<number | null>(null);
   const isProcessingRef = useRef(false);
 
   // Handle video ready
@@ -119,20 +119,7 @@ const LiveRootDetectorSimple: React.FC = () => {
     };
   }, [isStreaming, handleFrameCapture]);
 
-  // Handle start/stop camera
-  const handleStartStop = () => {
-    if (isStreaming) {
-      setIsStreaming(false);
-    } else {
-      setIsStreaming(true);
-    }
-  };
-
-  // Handle confidence change
-  const handleConfidenceChange = (newConfidence: number) => {
-    setConfidence(newConfidence);
-    setServerConfidence(newConfidence);
-  };
+  // Removed unused functions
 
 
 

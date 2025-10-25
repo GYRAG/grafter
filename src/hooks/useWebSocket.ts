@@ -30,7 +30,7 @@ export const useWebSocket = (url: string = 'http://localhost:5000'): UseWebSocke
   const [isConnected, setIsConnected] = useState(false);
   const [lastResult, setLastResult] = useState<DetectionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Initialize socket connection
@@ -39,8 +39,7 @@ export const useWebSocket = (url: string = 'http://localhost:5000'): UseWebSocke
       timeout: 10000,
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
-      maxReconnectionAttempts: 5
+      reconnectionAttempts: 5
     });
 
     // Connection event handlers
