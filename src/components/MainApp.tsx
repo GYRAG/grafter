@@ -57,18 +57,6 @@ const MainApp: React.FC = () => {
       sub: 'On Branch',
       steps: ['არჩევე ჯანსაღი ტოტი.', 'გააკეთე სუფთა ჭრილი.', 'დაამყენე მჭიდროდ.']
     },
-    {
-      icon: '🪵',
-      label: 'კალმზე დამყნობა',
-      sub: 'Scion Graft',
-      steps: ['მოამზადე კალამი.', 'დაუპირისპირე კამბი საძირეს.', 'დამაგრდი სამაგრით.']
-    },
-    {
-      icon: '🛠️',
-      label: 'სხვა მეთოდები',
-      sub: 'Other Methods',
-      steps: ['აირჩიე ალტერნატიული მეთოდი.', 'გააკეთე საცდელი დამყნობა.', 'შეაფასე მორგებულობა.']
-    }
   ];
 
   const hazelnutMethods = [
@@ -96,18 +84,6 @@ const MainApp: React.FC = () => {
       sub: 'Hazelnut Branch',
       steps: ['ტოტის არჩევა.', 'სუფთა ჭრილი.', 'დამყნობა.']
     },
-    {
-      icon: '🪵',
-      label: 'თხილის კალმზე დამყნობა',
-      sub: 'Hazelnut Scion',
-      steps: ['კალმის მომზადება.', 'კამბის დაპირისპირება.', 'დაფიქსირება.']
-    },
-    {
-      icon: '🛠️',
-      label: 'თხილის სხვა მეთოდები',
-      sub: 'Hazelnut Other',
-      steps: ['ალტერნატიული მეთოდი.', 'საცდელი შესრულება.', 'შეფასება.']
-    }
   ];
 
   const currentMethods = currentCategory === 'vine' ? vineMethods : hazelnutMethods;
