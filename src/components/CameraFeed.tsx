@@ -17,6 +17,7 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
   const streamRef = useRef<MediaStream | null>(null);
   const [, setVideoDimensions] = useState<{ width: number; height: number }>({ width: 640, height: 480 });
   const [error, setError] = useState<string | null>(null);
+  const [permissionStatus, setPermissionStatus] = useState<'checking' | 'granted' | 'denied' | 'prompt'>('checking');
 
   useEffect(() => {
     if (isStreaming) {
@@ -36,21 +37,69 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
     }
   }, [onVideoReady]);
 
+  const checkCameraPermission = async () => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setError('Camera access not supported in this browser.');
+        setPermissionStatus('denied');
+        return false;
+      }
+
+      // Check if we're on HTTPS or localhost
+      const isSecure = window.location.protocol === 'https:' || 
+                      window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1';
+      
+      if (!isSecure) {
+        setError('Camera access requires HTTPS. Please use https:// or localhost.');
+        setPermissionStatus('denied');
+        return false;
+      }
+
+      // Check permission status
+      if (navigator.permissions) {
+        const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        setPermissionStatus(permission.state);
+        
+        if (permission.state === 'denied') {
+          setError('Camera permission denied. Please enable camera access in your browser settings.');
+          return false;
+        }
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Error checking camera permission:', err);
+      setPermissionStatus('prompt');
+      return true; // Try anyway
+    }
+  };
+
   const startCamera = async () => {
     try {
       setError(null);
+      setPermissionStatus('checking');
+      
+      // Check permissions first
+      const canAccess = await checkCameraPermission();
+      if (!canAccess) return;
+      
+      setPermissionStatus('prompt');
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: 'user'
-        }
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          facingMode: 'user',
+          frameRate: { ideal: 30, max: 60 }
+        },
+        audio: false
       });
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
+        setPermissionStatus('granted');
 
         // Wait for video to load and get dimensions
         videoRef.current.onloadedmetadata = () => {
@@ -60,9 +109,19 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
           }
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error accessing camera:', err);
-      setError('Failed to access camera. Please check permissions.');
+      setPermissionStatus('denied');
+      
+      if (err.name === 'NotAllowedError') {
+        setError('Camera permission denied. Please allow camera access and refresh the page.');
+      } else if (err.name === 'NotFoundError') {
+        setError('No camera found. Please connect a camera and try again.');
+      } else if (err.name === 'NotReadableError') {
+        setError('Camera is already in use by another application.');
+      } else {
+        setError(`Failed to access camera: ${err.message}`);
+      }
     }
   };
 
@@ -113,22 +172,85 @@ const CameraFeed: React.FC<CameraFeedProps> = ({
     };
   }, [isStreaming]);
 
+  const handleRetry = () => {
+    setError(null);
+    setPermissionStatus('checking');
+    startCamera();
+  };
+
   return (
     <div className="camera-container">
       <div className="camera-feed">
         {error ? (
           <div style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            height: '300px',
+            height: '400px',
             color: '#ff4444',
+            textAlign: 'center',
+            padding: '20px',
+            background: 'rgba(255, 68, 68, 0.1)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 68, 68, 0.3)'
+          }}>
+            <div>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>📷</div>
+              <div style={{ fontSize: '18px', marginBottom: '10px', fontWeight: 'bold' }}>
+                Camera Access Required
+              </div>
+              <div style={{ marginBottom: '20px', lineHeight: '1.5' }}>
+                {error}
+              </div>
+              {permissionStatus === 'denied' && (
+                <div style={{ marginBottom: '20px', fontSize: '14px', color: '#ccc' }}>
+                  <div>To fix this:</div>
+                  <div>1. Click the camera icon in your browser's address bar</div>
+                  <div>2. Allow camera access</div>
+                  <div>3. Refresh the page</div>
+                </div>
+              )}
+              <button
+                onClick={handleRetry}
+                style={{
+                  background: 'linear-gradient(135deg, #73D700, #5bb300)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(115, 215, 0, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(115, 215, 0, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(115, 215, 0, 0.3)';
+                }}
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : permissionStatus === 'checking' ? (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '400px',
+            color: '#73D700',
             textAlign: 'center',
             padding: '20px'
           }}>
             <div>
-              <div style={{ fontSize: '24px', marginBottom: '10px' }}>📷</div>
-              <div>{error}</div>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
+              <div style={{ fontSize: '18px' }}>Checking camera permissions...</div>
             </div>
           </div>
         ) : (

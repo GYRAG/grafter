@@ -70,12 +70,14 @@ const LiveRootDetectorSimple: React.FC = () => {
     }
   }, [lastResult]);
 
-  // Auto-start camera when component mounts
-  useEffect(() => {
-    if (isConnected && !isStreaming) {
-      setIsStreaming(true);
-    }
-  }, [isConnected, isStreaming]);
+  // Manual camera control
+  const handleStartCamera = () => {
+    setIsStreaming(true);
+  };
+
+  const handleStopCamera = () => {
+    setIsStreaming(false);
+  };
 
   // Auto-capture frames when streaming
   useEffect(() => {
@@ -134,6 +136,66 @@ const LiveRootDetectorSimple: React.FC = () => {
       {/* Main Content */}
       <main className="detector-body">
         <div className="camera-section">
+          {/* Camera Controls */}
+          {!isStreaming && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '400px',
+              gap: '20px'
+            }}>
+              <div style={{
+                fontSize: '48px',
+                color: '#73D700'
+              }}>📷</div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: 'white',
+                textAlign: 'center'
+              }}>
+                Start Camera for Root Detection
+              </div>
+              <div style={{
+                fontSize: '16px',
+                color: '#ccc',
+                textAlign: 'center',
+                maxWidth: '400px',
+                lineHeight: '1.5'
+              }}>
+                Click the button below to start your camera and begin detecting plant roots in real-time.
+              </div>
+              <button
+                onClick={handleStartCamera}
+                style={{
+                  background: 'linear-gradient(135deg, #73D700, #5bb300)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 20px rgba(115, 215, 0, 0.3)',
+                  transition: 'all 0.3s ease',
+                  minWidth: '200px'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(115, 215, 0, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(115, 215, 0, 0.3)';
+                }}
+              >
+                Start Camera
+              </button>
+            </div>
+          )}
+
           {/* Camera Feed */}
           <div className="camera-wrapper">
             <CameraFeed
@@ -153,6 +215,40 @@ const LiveRootDetectorSimple: React.FC = () => {
                 tolerance={tolerance}
                 mirrorMode={true}
               />
+            )}
+
+            {/* Camera Control Overlay */}
+            {isStreaming && (
+              <div style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                zIndex: 20
+              }}>
+                <button
+                  onClick={handleStopCamera}
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 68, 68, 0.8)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                  }}
+                >
+                  Stop Camera
+                </button>
+              </div>
             )}
           </div>
         </div>
