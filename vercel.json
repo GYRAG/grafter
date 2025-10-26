@@ -15,6 +15,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "@vite_api_url"
+    "VITE_API_URL": "https://grafter-ai-detection.grafter.workers.dev"
   }
 }
