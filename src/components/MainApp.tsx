@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LiveRootDetectorSimple from './LiveRootDetectorSimple';
 import './MainApp.css';
 
 const MainApp: React.FC = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<'vine' | 'hazelnut'>('vine');
+  const [isLoading, setIsLoading] = useState(true);
   const [modalData, setModalData] = useState<{
     isOpen: boolean;
     title: string;
@@ -14,6 +15,18 @@ const MainApp: React.FC = () => {
     title: '',
     steps: []
   });
+
+  // Debug logging
+  console.log('MainApp rendered:', { showCamera, currentCategory, isLoading });
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleTileClick = (method: string, steps: string[]) => {
     setModalData({
@@ -87,6 +100,25 @@ const MainApp: React.FC = () => {
   ];
 
   const currentMethods = currentCategory === 'vine' ? vineMethods : hazelnutMethods;
+
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: 'white',
+        fontFamily: 'system-ui, Avenir, Helvetica, Arial, sans-serif'
+      }}>
+        <div style={{ fontSize: '48px', marginBottom: '20px' }}>🌱</div>
+        <h1>Loading AI Root Detection...</h1>
+        <p>Please wait while the application initializes.</p>
+      </div>
+    );
+  }
 
   if (showCamera) {
     return (
