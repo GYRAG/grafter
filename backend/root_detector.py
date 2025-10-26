@@ -40,27 +40,25 @@ except ImportError as e:
 class RootDetectorAPI:
     """Root detection service for API endpoints."""
     
-    def __init__(self, model_path="../branchera.v1i.coco/output/root_detection/weights/best.pt"):
+    def __init__(self, model_path="yolov8n.pt"):
         self.model_path = model_path
         self.model = None
         self.confidence_threshold = 0.5
         self.tolerance = 30  # pixels tolerance for center alignment
         
     def load_model(self):
-        """Load the trained YOLOv8 model."""
-        print("Loading YOLOv8 root detection model...")
+        """Load the YOLOv8n model."""
+        print("Loading YOLOv8n root detection model...")
         
         if YOLO is None:
             print("Error: ultralytics not available")
             return False
         
-        # Try multiple possible paths
+        # Try multiple possible paths (prioritize main directory yolov8n.pt)
         possible_paths = [
+            "yolov8n.pt",  # Main directory first
             self.model_path,
-            "../branchera.v1i.coco/output/root_detection/weights/best.pt",
-            "branchera.v1i.coco/output/root_detection/weights/best.pt",
-            "../output/root_detection/weights/best.pt",
-            "output/root_detection/weights/best.pt"
+            "../yolov8n.pt"
         ]
         
         for path in possible_paths:

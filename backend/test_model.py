@@ -10,12 +10,10 @@ print("Testing model loading...")
 print(f"Current directory: {os.getcwd()}")
 print(f"Python version: {sys.version}")
 
-# Check if model file exists
+# Check if model file exists (prioritize main directory yolov8n.pt)
 model_paths = [
-    "../branchera.v1i.coco/output/root_detection/weights/best.pt",
-    "branchera.v1i.coco/output/root_detection/weights/best.pt",
-    "../output/root_detection/weights/best.pt",
-    "output/root_detection/weights/best.pt"
+    "yolov8n.pt",  # Main directory first
+    "../yolov8n.pt"
 ]
 
 print("\nChecking model file paths:")
@@ -33,7 +31,7 @@ try:
     print("SUCCESS: ultralytics imported successfully")
     
     # Try loading model
-    model_path = "../branchera.v1i.coco/output/root_detection/weights/best.pt"
+    model_path = "../yolov8n.pt"
     if os.path.exists(model_path):
         print(f"\nTrying to load model from: {model_path}")
         try:
