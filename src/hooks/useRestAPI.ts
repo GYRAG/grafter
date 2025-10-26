@@ -24,7 +24,7 @@ interface UseRestAPIReturn {
   isLoading: boolean;
 }
 
-export const useRestAPI = (url: string = 'http://localhost:5000'): UseRestAPIReturn => {
+export const useRestAPI = (url: string = import.meta.env.VITE_API_URL || 'https://grafter-ai-detection.grafter.workers.dev'): UseRestAPIReturn => {
   const [isConnected, setIsConnected] = useState(false);
   const [lastResult, setLastResult] = useState<DetectionResult | null>(null);
   const [error, setError] = useState<string | null>(null);

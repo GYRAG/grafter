@@ -14,7 +14,14 @@ from root_detector import RootDetectorAPI
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, origins="*")
+# CORS configuration for production
+CORS(app, origins=[
+    "http://localhost:3000",
+    "http://localhost:5173", 
+    "https://*.vercel.app",
+    "https://*.netlify.app",
+    "https://*.github.io"
+])
 
 # Initialize root detector
 detector = RootDetectorAPI()

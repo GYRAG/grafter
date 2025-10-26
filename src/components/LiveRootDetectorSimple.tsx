@@ -19,7 +19,7 @@ interface Detection {
 const LiveRootDetectorSimple: React.FC = () => {
   // State management
   const [isStreaming, setIsStreaming] = useState(false);
-  const [confidence] = useState(0.5);
+  const [confidence] = useState(0.1);
   const [detections, setDetections] = useState<Detection[]>([]);
   const [videoDimensions, setVideoDimensions] = useState({ width: 640, height: 480 });
   const [cameraCenter, setCameraCenter] = useState<[number, number]>([320, 240]);

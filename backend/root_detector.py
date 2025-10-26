@@ -43,8 +43,22 @@ class RootDetectorAPI:
     def __init__(self, model_path="yolov8n.pt"):
         self.model_path = model_path
         self.model = None
-        self.confidence_threshold = 0.5
+        self.confidence_threshold = 0.1
         self.tolerance = 30  # pixels tolerance for center alignment
+        
+        # COCO class names for debugging
+        self.coco_classes = [
+            'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
+            'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat',
+            'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack',
+            'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
+            'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket',
+            'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+            'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake',
+            'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop',
+            'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
+            'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+        ]
         
     def load_model(self):
         """Load the YOLOv8n model."""
@@ -144,12 +158,26 @@ class RootDetectorAPI:
             detections = []
             aligned_count = 0
             
+            print(f"DEBUG: Image size: {width}x{height}, Confidence threshold: {self.confidence_threshold}")
+            print(f"DEBUG: Inference time: {inference_time:.3f}s")
+            
             if result.boxes is not None:
                 boxes = result.boxes.xyxy.cpu().numpy()
                 scores = result.boxes.conf.cpu().numpy()
-                class_ids = result.boxes.cls.cpu().numpy()
+                classes = result.boxes.cls.cpu().numpy()
                 
-                for i, (box, score, class_id) in enumerate(zip(boxes, scores, class_ids)):
+                print(f"DEBUG: Found {len(boxes)} detections")
+                for i, (box, score, cls) in enumerate(zip(boxes, scores, classes)):
+                    class_name = self.coco_classes[int(cls)] if int(cls) < len(self.coco_classes) else f"class_{int(cls)}"
+                    print(f"DEBUG: Detection {i}: {class_name} (class={int(cls)}), confidence={score:.3f}, box={box}")
+            else:
+                print("DEBUG: No detections found")
+                boxes = []
+                scores = []
+                classes = []
+            
+            if len(boxes) > 0:
+                for i, (box, score, class_id) in enumerate(zip(boxes, scores, classes)):
                     x1, y1, x2, y2 = map(int, box)
                     
                     # Calculate object center
@@ -164,12 +192,14 @@ class RootDetectorAPI:
                     if is_aligned:
                         aligned_count += 1
                     
+                    class_name = self.coco_classes[int(class_id)] if int(class_id) < len(self.coco_classes) else f"class_{int(class_id)}"
                     detection = {
                         "id": i + 1,
                         "box": [int(x1), int(y1), int(x2), int(y2)],
                         "center": [int(obj_center_x), int(obj_center_y)],
                         "confidence": float(score),
                         "class_id": int(class_id),
+                        "class_name": class_name,
                         "is_aligned": is_aligned,
                         "alignment_offset": {
                             "x": int(obj_center_x - camera_center_x),
